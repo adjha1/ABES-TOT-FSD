@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Registration Form</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary-600:#1d4ed8;
+      --ring:#93c5fd;
+      --danger:#dc2626;
+      --success:#16a34a;
+      --border:#e5e7eb;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text); background:linear-gradient(180deg, #eef2ff, var(--bg));
+    }
+    .container{
+      max-width:1000px; margin:40px auto; padding:16px;
+    }
+    .header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px;
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{width:44px; height:44px; border-radius:12px; background:var(--primary); display:grid; place-items:center; color:white; font-weight:800; box-shadow:0 8px 20px rgba(37,99,235,.25)}
+    .title{margin:0; font-size:1.5rem}
+    .subtitle{margin:2px 0 0; color:var(--muted); font-size:.95rem}
+
+    .card{
+      background:var(--card); border-radius:var(--radius); box-shadow:0 12px 30px rgba(15,23,42,.06);
+      border:1px solid var(--border); overflow:hidden;
+    }
+    .card-head{
+      padding:18px 20px; border-bottom:1px solid var(--border); background:linear-gradient(180deg,#fff, #fafafa);
+      display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; justify-content:space-between;
+    }
+    .badge{background:#eff6ff; color:#1e40af; padding:6px 10px; border-radius:999px; font-size:.8rem; font-weight:600}
+
+    form{padding:20px}
+
+    fieldset{border:1px dashed var(--border); border-radius:14px; padding:16px; margin:0 0 18px}
+    legend{padding:0 8px; color:var(--muted); font-weight:600}
+
+    .grid{display:grid; gap:14px}
+    @media (min-width:640px){.grid-2{grid-template-columns:repeat(2,1fr)}}
+    @media (min-width:900px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+
+    label{display:block; font-weight:600; margin:6px 0}
+    .req{color:var(--danger)}
+
+    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], input[type="password"], select, textarea{
+      width:100%; padding:12px 12px; border:1px solid var(--border); border-radius:12px; background:#fff;
+      outline:none; font-size:1rem; transition:border .2s, box-shadow .2s;
+    }
+    textarea{min-height:96px; resize:vertical}
+
+    input:focus, select:focus, textarea:focus{
+      border-color:var(--primary); box-shadow:0 0 0 4px var(--ring);
+    }
+
+    .inline{display:flex; gap:14px; flex-wrap:wrap; align-items:center}
+    .inline label{margin:0; font-weight:500}
+
+    .hint{color:var(--muted); font-size:.9rem}
+    .err{color:var(--danger); font-size:.9rem; display:none; margin-top:6px}
+
+    .actions{display:flex; gap:10px; justify-content:flex-end; padding:16px 20px; border-top:1px solid var(--border); background:#fafafa}
+    .btn{appearance:none; border:none; padding:12px 16px; border-radius:12px; font-weight:700; cursor:pointer}
+    .btn-primary{background:var(--primary); color:white}
+    .btn-primary:hover{background:var(--primary-600)}
+    .btn-muted{background:#f3f4f6}
+
+    .toast{position:fixed; right:16px; bottom:16px; padding:12px 16px; background:#ecfdf5; color:#065f46; border:1px solid #bbf7d0; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,.08); display:none}
+    .pw-meter{height:6px; border-radius:999px; background:#e5e7eb; overflow:hidden}
+    .pw-meter > span{display:block; height:100%; width:0}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">SR</div>
+        <div>
+          <h1 class="title">Student Registration</h1>
+          <p class="subtitle">Fill in the form to create a student profile</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" role="region" aria-labelledby="formTitle">
+      <div class="card-head">
+        <div>
+          <h2 id="formTitle" style="margin:0; font-size:1.15rem">Registration Form</h2>
+          <div class="hint">Fields marked with <span class="req">*</span> are required</div>
+        </div>
+        <span class="badge" id="stepBadge">Step 1 of 3</span>
+      </div>
+
+      <form id="registrationForm" novalidate>
+        <!-- Step 1: Personal Details -->
+        <fieldset data-step="1">
+          <legend>Personal Details</legend>
+          <div class="grid grid-3">
+            <div>
+              <label for="firstName">First Name <span class="req">*</span></label>
+              <input id="firstName" name="firstName" type="text" placeholder="e.g., Aisha" required />
+              <div class="err">Please enter your first name.</div>
+            </div>
+            <div>
+              <label for="lastName">Last Name <span class="req">*</span></label>
+              <input id="lastName" name="lastName" type="text" placeholder="e.g., Verma" required />
+              <div class="err">Please enter your last name.</div>
+            </div>
+            <div>
+              <label for="dob">Date of Birth <span class="req">*</span></label>
+              <input id="dob" name="dob" type="date" required />
+              <div class="err">Please select a valid date of birth.</div>
+            </div>
+          </div>
+          <div class="inline" role="group" aria-labelledby="genderLabel" style="margin-top:10px">
+            <span id="genderLabel" class="hint" style="font-weight:600; color:var(--text)">Gender <span class="req">*</span></span>
+            <label><input type="radio" name="gender" value="Female" required /> Female</label>
+            <label><input type="radio" name="gender" value="Male" required /> Male</label>
+            <label><input type="radio" name="gender" value="Other" required /> Other</label>
+          </div>
+        </fieldset>
+
+        <!-- Step 2: Contact & Address -->
+        <fieldset data-step="2" hidden>
+          <legend>Contact & Address</legend>
+          <div class="grid grid-3">
+            <div>
+              <label for="email">Email <span class="req">*</span></label>
+              <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+              <div class="err">Enter a valid email address.</div>
+            </div>
+            <div>
+              <label for="phone">Mobile Number <span class="req">*</span></label>
+              <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="10-digit number" pattern="^[0-9]{10}$" required />
+              <div class="err">Enter a valid 10-digit mobile number.</div>
+            </div>
+            <div>
+              <label for="guardianPhone">Guardian's Phone</label>
+              <input id="guardianPhone" name="guardianPhone" type="tel" inputmode="numeric" placeholder="Optional" pattern="^[0-9]{10}$" />
+              <div class="err">Enter a valid 10-digit phone number.</div>
+            </div>
+          </div>
+          <div class="grid grid-2">
+            <div>
+              <label for="address">Address <span class="req">*</span></label>
+              <textarea id="address" name="address" placeholder="House no., Street, Locality" required></textarea>
+              <div class="err">Address is required.</div>
+            </div>
+            <div class="grid grid-2">
+              <div>
+                <label for="city">City <span class="req">*</span></label>
+                <input id="city" name="city" type="text" required />
+                <div class="err">City is required.</div>
+              </div>
+              <div>
+                <label for="state">State <span class="req">*</span></label>
+                <select id="state" name="state" required>
+                  <option value="">Select state</option>
+                  <option>Uttar Pradesh</option>
+                  <option>Maharashtra</option>
+                  <option>Karnataka</option>
+                  <option>Tamil Nadu</option>
+                  <option>Delhi (NCT)</option>
+                  <option>Other</option>
+                </select>
+                <div class="err">Please select a state.</div>
+              </div>
+              <div>
+                <label for="country">Country <span class="req">*</span></label>
+                <select id="country" name="country" required>
+                  <option value="">Select country</option>
+                  <option>India</option>
+                  <option>Nepal</option>
+                  <option>Bangladesh</option>
+                  <option>Bhutan</option>
+                  <option>Sri Lanka</option>
+                  <option>Other</option>
+                </select>
+                <div class="err">Please select a country.</div>
+              </div>
+              <div>
+                <label for="pincode">PIN Code <span class="req">*</span></label>
+                <input id="pincode" name="pincode" type="text" inputmode="numeric" pattern="^[0-9]{6}$" placeholder="6-digit" required />
+                <div class="err">Enter a valid 6-digit PIN code.</div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Step 3: Academic & Account -->
+        <fieldset data-step="3" hidden>
+          <legend>Academic & Account</legend>
+          <div class="grid grid-3">
+            <div>
+              <label for="program">Program <span class="req">*</span></label>
+              <select id="program" name="program" required>
+                <option value="">Select program</option>
+                <option>B.Tech (CSE)</option>
+                <option>B.Tech (ECE)</option>
+                <option>MCA</option>
+                <option>MBA</option>
+                <option>BSc (Data Science)</option>
+                <option>Other</option>
+              </select>
+              <div class="err">Please select a program.</div>
+            </div>
+            <div>
+              <label for="year">Year of Study <span class="req">*</span></label>
+              <select id="year" name="year" required>
+                <option value="">Select year</option>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+                <option>Other</option>
+              </select>
+              <div class="err">Please select your year.</div>
+            </div>
+            <div>
+              <label for="roll">Roll / Enrollment No. <span class="req">*</span></label>
+              <input id="roll" name="roll" type="text" placeholder="e.g., 22CSE1234" required />
+              <div class="err">Roll number is required.</div>
+            </div>
+          </div>
+          <div class="grid grid-3">
+            <div>
+              <label for="photo">Upload Photo (JPG/PNG, &lt; 2MB)</label>
+              <input id="photo" name="photo" type="file" accept="image/*" />
+              <div class="hint">Optional, used for ID creation.</div>
+            </div>
+            <div>
+              <label for="password">Password <span class="req">*</span></label>
+              <input id="password" name="password" type="password" minlength="8" placeholder="Min 8 characters" required />
+              <div class="pw-meter" aria-hidden="true"><span id="pwBar"></span></div>
+              <div class="hint" id="pwHint">Strength: —</div>
+              <div class="err">Password must be at least 8 characters.</div>
+            </div>
+            <div>
+              <label for="confirmPassword">Confirm Password <span class="req">*</span></label>
+              <input id="confirmPassword" name="confirmPassword" type="password" minlength="8" required />
+              <div class="err">Passwords must match.</div>
+            </div>
+          </div>
+          <div class="inline" style="margin-top:6px">
+            <label><input id="terms" type="checkbox" required /> I agree to the <a href="#" onclick="alert('Sample Terms: Your data will be used for academic administration only.'); return false;">Terms & Conditions</a> <span class="req">*</span></label>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button type="button" class="btn btn-muted" id="backBtn" disabled>Back</button>
+          <button type="button" class="btn btn-muted" id="nextBtn">Next</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn" hidden>Submit Registration</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Registration submitted! (Demo) – Form data logged to console.</div>
+
+  <script>
+    const form = document.getElementById('registrationForm');
+    const steps = Array.from(form.querySelectorAll('fieldset'));
+    const stepBadge = document.getElementById('stepBadge');
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    let current = 0;
+
+    function showStep(index){
+      steps.forEach((fs,i)=>{ fs.hidden = i !== index; });
+      backBtn.disabled = index === 0;
+      nextBtn.hidden = index === steps.length - 1;
+      submitBtn.hidden = index !== steps.length - 1;
+      stepBadge.textContent = `Step ${index+1} of ${steps.length}`;
+      // focus first input for accessibility
+      const first = steps[index].querySelector('input,select,textarea');
+      if(first) first.focus({preventScroll:true});
+    }
+
+    function validateStep(index){
+      let valid = true;
+      const fields = steps[index].querySelectorAll('input,select,textarea');
+      fields.forEach(el=>{
+        // custom validations
+        if(el.id === 'photo' && el.files && el.files[0]){
+          const f = el.files[0];
+          if(f.size > 2 * 1024 * 1024){
+            el.setCustomValidity('Image must be less than 2MB.');
+          } else { el.setCustomValidity(''); }
+        }
+        if(el.id === 'confirmPassword'){
+          const pw = form.password.value;
+          el.setCustomValidity(el.value === pw ? '' : 'Passwords do not match');
+        }
+        if(!el.checkValidity()) valid = false;
+        const err = el.parentElement.querySelector('.err');
+        if(err){ err.style.display = el.checkValidity() ? 'none' : 'block'; }
+      });
+      // gender radios special case
+      if(index === 0){
+        const genderChecked = form.querySelector('input[name="gender"]:checked');
+        if(!genderChecked){ valid = false; alert('Please select a gender.'); }
+      }
+      return valid;
+    }
+
+    backBtn.addEventListener('click',()=>{ if(current>0){ current--; showStep(current);} });
+    nextBtn.addEventListener('click',()=>{ if(validateStep(current)){ current++; showStep(current);} });
+
+    // Password strength indicator
+    const pw = document.getElementById('password');
+    const pwBar = document.getElementById('pwBar');
+    const pwHint = document.getElementById('pwHint');
+    pw.addEventListener('input',()=>{
+      const val = pw.value;
+      let score = 0;
+      if(val.length >= 8) score++;
+      if(/[A-Z]/.test(val)) score++;
+      if(/[a-z]/.test(val)) score++;
+      if(/[0-9]/.test(val)) score++;
+      if(/[^A-Za-z0-9]/.test(val)) score++;
+      const percent = (score/5)*100;
+      pwBar.style.width = percent + '%';
+      pwBar.style.background = percent<40?'#fca5a5': percent<80? '#fde68a' : '#86efac';
+      pwHint.textContent = 'Strength: ' + (percent<40?'Weak': percent<80?'Medium':'Strong');
+    });
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      if(!validateStep(current)) return;
+      // Re-validate earlier steps too
+      for(let i=0;i<steps.length;i++){
+        if(!validateStep(i)) { current=i; showStep(current); return; }
+      }
+      const data = Object.fromEntries(new FormData(form).entries());
+      console.log('Submitted Student Registration Data:', data);
+      const toast = document.getElementById('toast');
+      toast.style.display = 'block';
+      setTimeout(()=> toast.style.display='none', 3000);
+      form.reset();
+      current = 0; showStep(current);
+      pwBar.style.width = '0%'; pwHint.textContent = 'Strength: —';
+    });
+
+    // Initialize
+    showStep(current);
+  </script>
+</body>
+</html>
